@@ -74,7 +74,7 @@ for t in range(time_steps-1):
     xt[:, t + 1] = ode_sol.time_marching(xt[:, t], u)
 
 
-def state_velocity(xt, dt, T):
+def state_velocity(xt, dt, T, show=1, save=0):
     t = np.arange(0, T, dt)
     fig = plt.figure(figsize=[16, 9])
     plt.grid()
@@ -82,12 +82,14 @@ def state_velocity(xt, dt, T):
     plt.plot(t, 24 * np.ones(t.shape[0]), 'k--')
     plt.title('State - Velocity')
     plt.ylabel('v')
-    # plt.show()
-    plt.savefig('velocity.png', format='png', dpi=300)
+    if show == 1:
+        plt.show()
+    if save == 1:
+        plt.savefig('velocity.png', format='png', dpi=300)
     plt.close(fig)
 
 
-def state_relative_distance(xt, dt, T):
+def state_relative_distance(xt, dt, T, show=1, save=0):
     t = np.arange(0, T, dt)
     fig = plt.figure(figsize=[16, 9])
     plt.grid()
@@ -95,48 +97,56 @@ def state_relative_distance(xt, dt, T):
     plt.ylim(0, 100)
     plt.title('State - Relative distance')
     plt.ylabel('z')
-    # plt.show()
-    plt.savefig('relative_distance.png', format='png', dpi=300)
+    if show == 1:
+        plt.show()
+    if save == 1:
+        plt.savefig('relative_distance.png', format='png', dpi=300)
     plt.close(fig)
 
     
-def slack(slack, dt, T):
+def slack(slack, dt, T, show=1, save=0):
     t = np.arange(0, T, dt)
     fig = plt.figure(figsize=[16, 9])
     plt.grid()
     plt.plot(t[:-1], slack[0, :-1], linewidth=3, color='orange')
     plt.title('Slack')
     plt.ylabel('B(x)')
-    # plt.show()
-    plt.savefig('slack.png', format='png', dpi=300)
+    if show == 1:
+        plt.show()
+    if save == 1:
+        plt.savefig('slack.png', format='png', dpi=300)
     plt.close(fig)
 
 
-def cbf(Bt, dt, T):
+def cbf(Bt, dt, T, show=1, save=0):
     t = np.arange(0, T, dt)
     fig = plt.figure(figsize=[16, 9])
     plt.grid()
     plt.plot(t[:-1], Bt[0, :-1], linewidth=3, color='red')
     plt.title('cbf')
     plt.ylabel('B(x)')
-    # plt.show()
-    plt.savefig('cbf.png', format='png', dpi=300)
+    if show == 1:
+        plt.show()
+    if save == 1:
+        plt.savefig('cbf.png', format='png', dpi=300)
     plt.close(fig)
 
 
-def clf(Vt, dt, T):
+def clf(Vt, dt, T, show=1, save=0):
     t = np.arange(0, T, dt)
     fig = plt.figure(figsize=[16, 9])
     plt.grid()
     plt.plot(t[:-1], Vt[0, :-1], linewidth=3, color='cyan')
     plt.title('clf')
     plt.ylabel('V(x)')
-    # plt.show()
-    plt.savefig('clf.png', format='png', dpi=300)
+    if show == 1:
+        plt.show()
+    if save == 1:
+        plt.savefig('clf.png', format='png', dpi=300)
     plt.close(fig)
     
     
-def control(u, dt, T):
+def control(u, dt, T, show=1, save=0):
     u_max = .3 * 9.8 * 1650
     t = np.arange(0, T, dt)
     fig = plt.figure(figsize=[16, 9])
@@ -146,8 +156,11 @@ def control(u, dt, T):
     plt.plot(t, -u_max * np.ones(t.shape[0]), 'k--')
     plt.title('control')
     plt.ylabel('u(t, x)')
-    # plt.show()
-    plt.savefig('control.png', format='png', dpi=300)
+    if show == 1:
+        plt.show()
+    if save == 1:
+        plt.savefig('control.png', format='png', dpi=300)
+
     plt.close(fig)
 
 

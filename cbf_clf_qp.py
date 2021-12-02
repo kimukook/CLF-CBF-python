@@ -79,7 +79,10 @@ class CbfClfQp:
     :param  verbose :   Show the optimization log or not
     """
     def __init__(self, system, option_class):
-        self.udim = system.udim
+        if hasattr(system, 'udim'):
+            self.udim = system.udim
+        else:
+            raise KeyError('udim is not given in the system dynamic')
 
         self.cbf = system.cbf
 
@@ -117,18 +120,21 @@ class CbfClfQp:
     def cbf_clf_qp(self, x, u_ref, with_slack=1, verbose=0):
         """
 
-        :param x:   The current state
-        :param u_ref:   A real number of 1D vector with shape (udim,)
-        :param with_slack:
-        :param verbose:
+        :param x         :   The current state
+        :param u_ref     :   A real number of 1D vector with shape (udim,)
+        :param with_slack:   Indicator if there is slack variable
+        :param verbose   :   Indicator if QP info is displayed
         :return:
         """
         inf = np.inf
         self.with_slack = with_slack
 
         slack = None
-        if u_ref.shape != (self.udim,):
-            raise ValueError(f'u_ref should have the shape size (u_dim,), now it is {u_ref.shape}')
+        if u_ref is None:
+            u_ref = np.zeros(self.udim)
+        else:
+            if u_ref.shape != (self.udim,):
+                raise ValueError(f'u_ref should have the shape size (u_dim,), now it is {u_ref.shape}')
 
         # Read the weight input and build up the matrix H in the cost function
         if self.weight_input.shape == (1, 1):
