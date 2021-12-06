@@ -82,7 +82,7 @@ class CbfClfQp:
         if hasattr(system, 'udim'):
             self.udim = system.udim
         else:
-            raise KeyError('udim is not given in the system dynamic')
+            raise KeyError('udim is not given in the system dynamic!')
 
         self.cbf = system.cbf
 
@@ -117,7 +117,7 @@ class CbfClfQp:
 
         self.with_slack = None
 
-    def cbf_clf_qp(self, x, u_ref, with_slack=1, verbose=0):
+    def cbf_clf_qp(self, x, u_ref=None, with_slack=1, verbose=0):
         """
 
         :param x         :   The current state

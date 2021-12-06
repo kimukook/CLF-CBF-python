@@ -48,16 +48,22 @@ class AdaptiveCruiseControl:
 
         self.Fr = None
 
+        # Define the symbolic expression for system dynamic, CLF and CBF
         self.f, self.g = self.simple_car_dynamics()
         self.cbf = self.define_cbf()
         self.clf = self.define_clf()
 
-        self.udim = params['udim']
+        if 'udim' in params.keys():
+            self.udim = params['udim']
+        else:
+            print(f'The dimension of input u is not given, set it to be default 1')
+            self.udim = 1
 
     def simple_car_dynamics(self):
         self.Fr = self.Fr_()
+        # f, g both column vector
         f = sp.Matrix([self.x[1], -self.Fr / self.m, self.v0 - self.x[1]])
-        g = sp.Matrix([[0], [1/self.m], [0]])
+        g = sp.Matrix([0, 1/self.m, 0])
         return f, g
 
     def Fr_(self):

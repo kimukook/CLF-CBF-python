@@ -31,7 +31,6 @@ class ControlAffineSystem:
     def __init__(self, system):
         self.x = system.x  # column-wise vector
         self.xdim = system.x.shape[0]
-        self.params = None
         self.xdim = self.x.shape[0]
         self.udim = system.udim
 
@@ -69,6 +68,8 @@ class ControlAffineSystem:
 
     def define_system(self, dynamic_system_class):
         # todo check f and g both are symbolic expression
+
+        # f & g are both functions; given input as num_states-by-, the output is num_states-by-1
         self.f_symbolic = dynamic_system_class.f
         self.f = lambdify(np.array(self.x.T), self.f_symbolic, 'numpy')
         if self.f(np.ones(self.xdim)).shape != (self.xdim, 1):
@@ -86,17 +87,19 @@ class ControlAffineSystem:
         :return:
         """
         # todo check cbf is symbolic input
+        # clf: given input as num_states-by-, the output is a scalar
         self.cbf_symbolic = cbf
         # input for cbf has to be a 2D column-wise vector with size (self.xdim, 1)
         self.cbf = lambdify(np.array(self.x.T), self.cbf_symbolic, 'numpy')
 
     def define_clf(self, clf):
         """
-        Define the symbolic control barrier function
+        Define the symbolic control Lyapunov function
         :param clf:
         :return:
         """
         # todo check clf is symbolic input
+        # lf_clf: given input as num_states-by-, the output is a 1-by-1 array
         self.clf_symbolic = clf
         # input for clf has to be a column-wise vector with size (self.xdim, 1)
         self.clf = lambdify(np.array(self.x.T), self.clf_symbolic, 'numpy')
@@ -112,7 +115,9 @@ class ControlAffineSystem:
         self.lg_cbf_symbolic = dx_cbf_symbolic * self.g_symbolic
 
         # input for lf_cbf and lg_cbf has to be a column-wise vector with size (self.xdim, 1)
+        # lf_clf: given input as num_states-by-, the output is a 1-by-1 array
         self.lf_cbf = lambdify(np.array(self.x.T), self.lf_cbf_symbolic, 'numpy')
+        # lg_cbf: given input as num_states-by-, the output is a x-by-1 array, x depends on CLF and udim;
         self.lg_cbf = lambdify(np.array(self.x.T), self.lg_cbf_symbolic, 'numpy')
 
         dx_clf_symbolic = sp.Matrix([self.clf_symbolic]).jacobian(self.x)
@@ -121,12 +126,16 @@ class ControlAffineSystem:
         self.lg_clf_symbolic = dx_clf_symbolic * self.g_symbolic
 
         # input for lf_clf and lg_clf has to be a column-wise vector with size (self.xdim, 1)
+        # lf_clf: given input as num_states-by-, the output is a 1-by-1 array
         self.lf_clf = lambdify(np.array(self.x.T), self.lf_clf_symbolic, 'numpy')
+        # lg_clf: given input as num_states-by-, the output is a x-by-1 array, x depends on CLF and udim
         self.lg_clf = lambdify(np.array(self.x.T), self.lg_clf_symbolic, 'numpy')
 
     def __str__(self):
-        # TODO
-        return f'Class contains the states {self.x}'
+        return f'Class contains the states {self.x}, \n' + \
+                f'system dynamic f {self.f} and g {self.g} \n' \
+                f'CLF {self.clf}, \n' + \
+                f'CBF {self.cbf}, \n'
 
     def __repr__(self):
         # TODO
